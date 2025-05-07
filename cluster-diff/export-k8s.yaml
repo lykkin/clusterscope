@@ -1,0 +1,44 @@
+#!/bin/bash
+
+backup_folder="kubernetes_backup"
+# Create a directory to store the backup
+mkdir -p $backup_folder
+
+# Get a list of all resource resources, including both namespaced and non-namespaced resources
+resources=$(kubectl api-resources --verbs=list -o name)
+
+# Get a list of all namespaces
+namespaces=$(kubectl get namespaces -o=jsonpath='{.items[*].metadata.name}')
+
+# Retrieve non-namespaced resources
+for resource in $resources; do
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Exporting: $resource"
+    if [[ "$resource" == "events" || "$resource" == "events.events.k8s.io" ]]; then
+      continue
+    fi
+    # Check if the resource is namespaced
+    if [ $(kubectl get $resource -o jsonpath='{.items[*].metadata.namespace}' | wc -w) -gt 0 ]; then # if namespaced
+        echo "$(date +"%Y-%m-%d %H:%M:%S") - Exporting (namespaced): $resource"
+        for namespace in $namespaces; do
+            echo "$(date +"%Y-%m-%d %H:%M:%S") - Exporting: $namespace/$resource"
+            if [ $(kubectl get $resource --namespace=$namespace -o jsonpath='{.items[*].metadata.name}' | wc -w) -gt 0 ]; then
+                mkdir -p $backup_folder/$namespace/$resource
+                # Write each item to its own file
+                for item in $(kubectl get $resource --namespace=$namespace -o jsonpath='{.items[*].metadata.name}'); do
+                    echo "$(date +"%Y-%m-%d %H:%M:%S") - Exporting: $namespace/$resource/$item"
+                    kubectl get $resource $item --namespace=$namespace -o yaml >$backup_folder/$namespace/$resource/$item.yaml
+                done
+            fi
+        done
+    else # if not namespaced
+        echo "$(date +"%Y-%m-%d %H:%M:%S") - Exporting (non-namespaced): $resource"
+        if [ $(kubectl get $resource -o jsonpath='{.items[*].metadata.name}' | wc -w) -gt 0 ]; then
+            # kubectl get $resource -o yaml >$backup_folder/${resource}.yaml
+            mkdir -p $backup_folder/non-namespaced/$resource
+            for item in $(kubectl get $resource -o jsonpath='{.items[*].metadata.name}'); do
+                echo "$(date +"%Y-%m-%d %H:%M:%S") - Exporting: $resource/$item"
+                kubectl get $resource $item -o yaml >$backup_folder/non-namespaced/$resource/$item.yaml
+            done
+        fi
+    fi
+done

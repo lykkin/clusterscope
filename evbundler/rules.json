@@ -1,0 +1,534 @@
+{
+  "enforced": {
+    "Enforce": [
+      "Ephemeral (debug) containers are not permitted.",
+      "Sharing the host namespaces is disallowed. The fields spec.hostNetwork, spec.hostIPC, and spec.hostPID must not be set to true.",
+      "Images without tags are mutable and not allowed.",
+      "Using a mutable image tag e.g. 'latest' is not allowed.",
+      "The namespace used for this resource is not allowed.",
+      "A namespace is required.",
+      "Services of type NodePort are not allowed.",
+      "Privilege escalation is disallowed. The fields spec.containers[*].securityContext.allowPrivilegeEscalation, spec.initContainers[*].securityContext.allowPrivilegeEscalation, and spec.ephemeralContainers[*].securityContext.allowPrivilegeEscalation must be undefined or set to `false`.",
+      "Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user, spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must be undefined.",
+      "Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user, spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must be undefined.",
+      "Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role, spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must be undefined.",
+      "Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role, spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must be undefined.",
+      "The AppArmor profile used is not in the approved list. The annotation container.apparmor.security.beta.kubernetes.io must not be defined, or must be set to a profile on the approved list.",
+      "Adding of additional capabilities beyond the allowed set is not allowed. The fields spec.containers[*].securityContext.capabilities.add, spec.initContainers[*].securityContext.capabilities.add, and spec.ephemeralContainers[*].securityContext.capabilities.add must be in the allowed list.",
+      "Only externalIPs in the approved list are allowed.",
+      "Only external names from the approved list are allowed.",
+      "The host port used is not allowed. The fields spec.containers[*].ports[*].hostPort, spec.initContainers[*].ports[*].hostPort, and spec.ephemeralContainers[*].ports[*].hostPort must only include ports from the allowed list.",
+      "Changing the proc mount from the default is not allowed. The fields spec.containers[*].securityContext.procMount, spec.initContainers[*].securityContext.procMount, and spec.ephemeralContainers[*].securityContext.procMount must not be changed from `Default`.",
+      "The seccomp profile used is not in the allowed list.  The fields spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type, spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type must not be set to a value outside of the approved list.",
+      "The seccomp profile used is not in the allowed list.  The fields spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type, spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type must not be set to a value outside of the approved list.",
+      "Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type, spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must be in the allowed list.",
+      "Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type, spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must be in the allowed list.",
+      "Sysctl set that is not in the allowed list.  The field spec.securityContext.sysctls must only use values from the allowed list"
+    ],
+    "Audit": [
+      "Automount Kubernetes API Credentials is explicitly turned on. The field spec.automountServiceAccountToken  must be undefined or set to false.",
+      "Automount Kubernetes API Credentials isn't turned off. The field automountServiceAccountToken  must be set to false.",
+      "The sidecar.istio.io/inject label or annotation cannot be false.",
+      "Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged, spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged must be undefined or set to false.",
+      "Containers must drop all Linux capabilities by setting the fields spec.containers[*].securityContext.capabilities.drop, spec.initContainers[*].securityContext.capabilities.drop, and spec.ephemeralContainers[*].securityContext.capabilities.drop to `ALL`.",
+      "Namespaces must have `istio-injection: enabled` label.",
+      "The pod is missing a required label.",
+      "runAsGroup must be set to an id > 0 in either spec.securityContext.runAsGroup or (spec.containers[*].securityContext.runAsGroup, spec.initContainers[*].securityContext.runAsGroup, and spec.ephemeralContainers[*].securityContext.runAsGroup)",
+      "fsGroup must be empty or set to an id > 0 in spec.securityContextChanging.",
+      "Supplemental group ids must be empty or > 0 in spec.securityContext.supplementalGroups[*].",
+      "Either `runAsNonRoot` must be set to true or `runAsUser` must be > 0 in spec.securityContext or (spec.containers[*].securityContext, spec.initContainers[*].securityContext, and spec.ephemeralContainers[*].securityContext)",
+      "hostPath volume paths are restricted to the allowed list.",
+      "PV hostPath is restricted to the allowed list.",
+      "hostPath volumes must be mounted as readOnly.",
+      "Image registry is not in the approved list",
+      "One or more volume types used in the pod is not in the allowed list."
+    ]
+  },
+  "rulePatterns": {
+    "Ephemeral (debug) containers are not permitted.": {
+      "spec": {
+        "X(ephemeralContainers)": "null"
+      }
+    },
+    "Automount Kubernetes API Credentials is explicitly turned on. The field spec.automountServiceAccountToken  must be undefined or set to false.": {
+      "spec": {
+        "=(automountServiceAccountToken)": false,
+        "=(template)": {
+          "=(spec)": {
+            "=(automountServiceAccountToken)": false
+          }
+        }
+      }
+    },
+    "Automount Kubernetes API Credentials isn't turned off. The field automountServiceAccountToken  must be set to false.": {
+      "automountServiceAccountToken": false
+    },
+    "Sharing the host namespaces is disallowed. The fields spec.hostNetwork, spec.hostIPC, and spec.hostPID must not be set to true.": {
+      "spec": {
+        "=(hostIPC)": "false",
+        "=(hostNetwork)": "false",
+        "=(hostPID)": "false"
+      }
+    },
+    "Images without tags are mutable and not allowed.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "image": "*:*"
+        }
+      }
+    ],
+    "Using a mutable image tag e.g. 'latest' is not allowed.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "image": "!*:latest"
+        }
+      }
+    ],
+    "The sidecar.istio.io/inject label or annotation cannot be false.": {
+      "metadata": {
+        "=(annotations)": {
+          "=(sidecar.istio.io/inject)": "!false"
+        },
+        "=(labels)": {
+          "=(sidecar.istio.io/inject)": "!false"
+        }
+      }
+    },
+    "The namespace used for this resource is not allowed.": {
+      "metadata": {
+        "namespace": "!bigbang & !default"
+      }
+    },
+    "A namespace is required.": {
+      "metadata": {
+        "namespace": "?*"
+      }
+    },
+    "Services of type NodePort are not allowed.": {
+      "spec": {
+        "type": "!NodePort"
+      }
+    },
+    "Privilege escalation is disallowed. The fields spec.containers[*].securityContext.allowPrivilegeEscalation, spec.initContainers[*].securityContext.allowPrivilegeEscalation, and spec.ephemeralContainers[*].securityContext.allowPrivilegeEscalation must be undefined or set to `false`.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(allowPrivilegeEscalation)": "false"
+          }
+        }
+      }
+    ],
+    "Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged, spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged must be undefined or set to false.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(privileged)": "false"
+          }
+        }
+      }
+    ],
+    "Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user, spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must be undefined.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(seLinuxOptions)": {
+              "X(user)": "null"
+            }
+          }
+        }
+      }
+    ],
+    "Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role, spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must be undefined.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(seLinuxOptions)": {
+              "X(role)": "null"
+            }
+          }
+        }
+      }
+    ],
+    "Containers must drop all Linux capabilities by setting the fields spec.containers[*].securityContext.capabilities.drop, spec.initContainers[*].securityContext.capabilities.drop, and spec.ephemeralContainers[*].securityContext.capabilities.drop to `ALL`.": [
+      {
+        "deny": {
+          "conditions": {
+            "any": [
+              {
+                "key": "{{ not_null(element.securityContext.capabilities.drop, '[]') | contains(@, 'ALL') }}",
+                "operator": "Equals",
+                "value": false
+              }
+            ]
+          }
+        },
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]"
+      }
+    ],
+    "Namespaces must have `istio-injection: enabled` label.": {
+      "metadata": {
+        "labels": {
+          "istio-injection": "enabled"
+        }
+      }
+    },
+    "The pod is missing a required label.": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "?*",
+          "app.kubernetes.io/version": "?*"
+        }
+      }
+    },
+    "runAsGroup must be set to an id > 0 in either spec.securityContext.runAsGroup or (spec.containers[*].securityContext.runAsGroup, spec.initContainers[*].securityContext.runAsGroup, and spec.ephemeralContainers[*].securityContext.runAsGroup)": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(runAsGroup)": "*"
+          }
+        },
+        "preconditions": {
+          "all": [
+            {
+              "key": "{{ element.name }}",
+              "operator": "AnyIn",
+              "value": [
+                "istio-init",
+                "init-chmod-data"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(runAsGroup)": ">0"
+          }
+        },
+        "preconditions": {
+          "all": [
+            {
+              "key": "{{ element.name }}",
+              "operator": "AnyNotIn",
+              "value": [
+                "istio-init",
+                "init-chmod-data"
+              ]
+            }
+          ],
+          "any": [
+            {
+              "key": "{{ request.object.spec.securityContext.runAsGroup || to_number('0') }}",
+              "operator": "NotEquals",
+              "value": 0
+            }
+          ]
+        }
+      },
+      {
+        "anyPattern": [
+          {
+            "securityContext": {
+              "runAsGroup": ">0"
+            }
+          }
+        ],
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "preconditions": {
+          "all": [
+            {
+              "key": "{{ request.object.spec.securityContext.runAsGroup || to_number('0') }}",
+              "operator": "Equals",
+              "value": 0
+            },
+            {
+              "key": "{{ element.name }}",
+              "operator": "AnyNotIn",
+              "value": [
+                "istio-init",
+                "init-chmod-data"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "fsGroup must be empty or set to an id > 0 in spec.securityContextChanging.": {
+      "spec": {
+        "=(securityContext)": {
+          "=(fsGroup)": ">0"
+        }
+      }
+    },
+    "Supplemental group ids must be empty or > 0 in spec.securityContext.supplementalGroups[*].": {
+      "spec": {
+        "=(securityContext)": {
+          "=(supplementalGroups)": ">0"
+        }
+      }
+    },
+    "Either `runAsNonRoot` must be set to true or `runAsUser` must be > 0 in spec.securityContext or (spec.containers[*].securityContext, spec.initContainers[*].securityContext, and spec.ephemeralContainers[*].securityContext)": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(runAsNonRoot)": "*",
+            "=(runAsUser)": "*"
+          }
+        },
+        "preconditions": {
+          "all": [
+            {
+              "key": "{{ element.name }}",
+              "operator": "AnyIn",
+              "value": [
+                "istio-init",
+                "init-chmod-data"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(runAsNonRoot)": "!false",
+            "=(runAsUser)": ">0"
+          }
+        },
+        "preconditions": {
+          "all": [
+            {
+              "key": "{{ element.name }}",
+              "operator": "AnyNotIn",
+              "value": [
+                "istio-init",
+                "init-chmod-data"
+              ]
+            }
+          ],
+          "any": [
+            {
+              "key": "{{ request.object.spec.securityContext.runAsUser || to_number('0') }}",
+              "operator": "NotEquals",
+              "value": 0
+            },
+            {
+              "key": "{{ request.object.spec.securityContext.runAsNonRoot || '0' == '1' }}",
+              "operator": "Equals",
+              "value": true
+            }
+          ]
+        }
+      },
+      {
+        "anyPattern": [
+          {
+            "securityContext": {
+              "runAsNonRoot": true
+            }
+          },
+          {
+            "securityContext": {
+              "runAsUser": ">0"
+            }
+          }
+        ],
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "preconditions": {
+          "all": [
+            {
+              "key": "{{ request.object.spec.securityContext.runAsUser || to_number('0') }}",
+              "operator": "Equals",
+              "value": 0
+            },
+            {
+              "key": "{{ request.object.spec.securityContext.runAsNonRoot || '0' == '1' }}",
+              "operator": "NotEquals",
+              "value": true
+            },
+            {
+              "key": "{{ element.name }}",
+              "operator": "AnyNotIn",
+              "value": [
+                "istio-init",
+                "init-chmod-data"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "The AppArmor profile used is not in the approved list. The annotation container.apparmor.security.beta.kubernetes.io must not be defined, or must be set to a profile on the approved list.": {
+      "metadata": {
+        "=(annotations)": {
+          "=(container.apparmor.security.beta.kubernetes.io/*)": "runtime/default | localhost/*"
+        }
+      }
+    },
+    "Adding of additional capabilities beyond the allowed set is not allowed. The fields spec.containers[*].securityContext.capabilities.add, spec.initContainers[*].securityContext.capabilities.add, and spec.ephemeralContainers[*].securityContext.capabilities.add must be in the allowed list.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(capabilities)": {
+              "=(add)": "NET_BIND_SERVICE | NET_ADMIN | NET_RAW"
+            }
+          }
+        }
+      }
+    ],
+    "Only externalIPs in the approved list are allowed.": {
+      "spec": {
+        "=(externalIPs)": ""
+      }
+    },
+    "Only external names from the approved list are allowed.": {
+      "spec": {
+        "(type)": "ExternalName",
+        "externalName": ""
+      }
+    },
+    "hostPath volume paths are restricted to the allowed list.": {
+      "spec": {
+        "=(volumes)": [
+          {
+            "=(hostPath)": {
+              "path": ""
+            }
+          }
+        ]
+      }
+    },
+    "PV hostPath is restricted to the allowed list.": {
+      "spec": {
+        "=(hostPath)": {
+          "path": ""
+        }
+      }
+    },
+    "hostPath volumes must be mounted as readOnly.": [
+      {
+        "deny": {
+          "conditions": {
+            "all": [
+              {
+                "key": "{{ request.object.spec.[containers, initContainers, ephemeralContainers][].volumeMounts[?name == '{{element.name}}'][] | length(@) }}",
+                "operator": "NotEquals",
+                "value": "{{ request.object.spec.[containers, initContainers, ephemeralContainers][].volumeMounts[?name == '{{element.name}}' && readOnly] [] | length(@) }}"
+              }
+            ]
+          }
+        },
+        "list": "request.object.spec.volumes[?hostPath][]"
+      }
+    ],
+    "The host port used is not allowed. The fields spec.containers[*].ports[*].hostPort, spec.initContainers[*].ports[*].hostPort, and spec.ephemeralContainers[*].ports[*].hostPort must only include ports from the allowed list.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(ports)": [
+            {
+              "=(hostPort)": ""
+            }
+          ]
+        }
+      }
+    ],
+    "Image registry is not in the approved list": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "image": "registry1.dso.mil* | registry.dso.mil*"
+        }
+      }
+    ],
+    "Changing the proc mount from the default is not allowed. The fields spec.containers[*].securityContext.procMount, spec.initContainers[*].securityContext.procMount, and spec.ephemeralContainers[*].securityContext.procMount must not be changed from `Default`.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(procMount)": "Default"
+          }
+        }
+      }
+    ],
+    "The seccomp profile used is not in the allowed list.  The fields spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type, spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type must not be set to a value outside of the approved list.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(seccompProfile)": {
+              "type": "RuntimeDefault | Localhost"
+            }
+          }
+        }
+      }
+    ],
+    "Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type, spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type, and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must be in the allowed list.": [
+      {
+        "list": "request.object.spec.[ephemeralContainers, initContainers, containers][]",
+        "pattern": {
+          "=(securityContext)": {
+            "=(seLinuxOptions)": {
+              "=(type)": "container_t | container_init_t | container_kvm_t"
+            }
+          }
+        }
+      }
+    ],
+    "Sysctl set that is not in the allowed list.  The field spec.securityContext.sysctls must only use values from the allowed list": {
+      "spec": {
+        "=(securityContext)": {
+          "=(sysctls)": [
+            {
+              "name": "kernel.shm_rmid_forced | net.ipv4.ip_local_port_range | net.ipv4.ip_unprivileged_port_start | net.ipv4.tcp_syncookies | net.ipv4.ping_group_range | net.ipv4.ip_local_reserved_ports | net.ipv4.tcp_keepalive_time | net.ipv4.tcp_fin_timeout | net.ipv4.tcp_keepalive_intvl | net.ipv4.tcp_keepalive_probes",
+              "value": "?*"
+            }
+          ]
+        }
+      }
+    },
+    "One or more volume types used in the pod is not in the allowed list.": [
+      {
+        "anyPattern": [
+          {
+            "configMap": "*"
+          },
+          {
+            "csi": "*"
+          },
+          {
+            "downwardAPI": "*"
+          },
+          {
+            "emptyDir": "*"
+          },
+          {
+            "ephemeral": "*"
+          },
+          {
+            "persistentVolumeClaim": "*"
+          },
+          {
+            "projected": "*"
+          },
+          {
+            "secret": "*"
+          }
+        ],
+        "list": "request.object.spec.volumes"
+      }
+    ]
+  }
+}

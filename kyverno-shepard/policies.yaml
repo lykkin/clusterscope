@@ -1,0 +1,4826 @@
+apiVersion: v1
+items:
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      policies.kyverno.io/category: Security
+      policies.kyverno.io/description: This policy mutates all containers in pods
+        to drop `ALL` capabilities by default.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/title: Add Default Capability Drop
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: add-default-capability-drop
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      mutate:
+        foreach:
+        - list: request.object.spec.containers[]
+          patchStrategicMerge:
+            spec:
+              containers:
+              - name: '{{ element.name }}'
+                securityContext:
+                  capabilities:
+                    drop:
+                    - ALL
+          preconditions:
+            any:
+            - key: '{{ contains((element.securityContext.capabilities.drop[] || ''[]''),
+                ''ALL'') }}'
+              operator: Equals
+              value: false
+        - list: request.object.spec.ephemeralContainers[]
+          patchStrategicMerge:
+            spec:
+              ephemeralContainers:
+              - name: '{{ element.name }}'
+                securityContext:
+                  capabilities:
+                    drop:
+                    - ALL
+          preconditions:
+            any:
+            - key: '{{ contains((element.securityContext.capabilities.drop[] || ''[]''),
+                ''ALL'') }}'
+              operator: Equals
+              value: false
+        - list: request.object.spec.initContainers[]
+          patchStrategicMerge:
+            spec:
+              initContainers:
+              - name: '{{ element.name }}'
+                securityContext:
+                  capabilities:
+                    drop:
+                    - ALL
+          preconditions:
+            any:
+            - key: '{{ contains((element.securityContext.capabilities.drop[] || ''[]''),
+                ''ALL'') }}'
+              operator: Equals
+              value: false
+      name: add-default-capability-drop
+      skipBackgroundRequests: true
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - Job
+              - ReplicaSet
+              - ReplicationController
+              - StatefulSet
+          resources: {}
+        mutate:
+          foreach:
+          - list: request.object.spec.template.spec.containers[]
+            patchStrategicMerge:
+              spec:
+                template:
+                  spec:
+                    containers:
+                    - name: '{{ element.name }}'
+                      securityContext:
+                        capabilities:
+                          drop:
+                          - ALL
+            preconditions:
+              any:
+              - key: '{{ contains((element.securityContext.capabilities.drop[] ||
+                  ''[]''), ''ALL'') }}'
+                operator: Equals
+                value: false
+          - list: request.object.spec.template.spec.ephemeralContainers[]
+            patchStrategicMerge:
+              spec:
+                template:
+                  spec:
+                    ephemeralContainers:
+                    - name: '{{ element.name }}'
+                      securityContext:
+                        capabilities:
+                          drop:
+                          - ALL
+            preconditions:
+              any:
+              - key: '{{ contains((element.securityContext.capabilities.drop[] ||
+                  ''[]''), ''ALL'') }}'
+                operator: Equals
+                value: false
+          - list: request.object.spec.template.spec.initContainers[]
+            patchStrategicMerge:
+              spec:
+                template:
+                  spec:
+                    initContainers:
+                    - name: '{{ element.name }}'
+                      securityContext:
+                        capabilities:
+                          drop:
+                          - ALL
+            preconditions:
+              any:
+              - key: '{{ contains((element.securityContext.capabilities.drop[] ||
+                  ''[]''), ''ALL'') }}'
+                operator: Equals
+                value: false
+        name: autogen-add-default-capability-drop
+        skipBackgroundRequests: true
+      - exclude:
+          any:
+          - resources:
+              kinds:
+              - CronJob
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - CronJob
+          resources: {}
+        mutate:
+          foreach:
+          - list: request.object.spec.jobTemplate.spec.template.spec.containers[]
+            patchStrategicMerge:
+              spec:
+                jobTemplate:
+                  spec:
+                    template:
+                      spec:
+                        containers:
+                        - name: '{{ element.name }}'
+                          securityContext:
+                            capabilities:
+                              drop:
+                              - ALL
+            preconditions:
+              any:
+              - key: '{{ contains((element.securityContext.capabilities.drop[] ||
+                  ''[]''), ''ALL'') }}'
+                operator: Equals
+                value: false
+          - list: request.object.spec.jobTemplate.spec.template.spec.ephemeralContainers[]
+            patchStrategicMerge:
+              spec:
+                jobTemplate:
+                  spec:
+                    template:
+                      spec:
+                        ephemeralContainers:
+                        - name: '{{ element.name }}'
+                          securityContext:
+                            capabilities:
+                              drop:
+                              - ALL
+            preconditions:
+              any:
+              - key: '{{ contains((element.securityContext.capabilities.drop[] ||
+                  ''[]''), ''ALL'') }}'
+                operator: Equals
+                value: false
+          - list: request.object.spec.jobTemplate.spec.template.spec.initContainers[]
+            patchStrategicMerge:
+              spec:
+                jobTemplate:
+                  spec:
+                    template:
+                      spec:
+                        initContainers:
+                        - name: '{{ element.name }}'
+                          securityContext:
+                            capabilities:
+                              drop:
+                              - ALL
+            preconditions:
+              any:
+              - key: '{{ contains((element.securityContext.capabilities.drop[] ||
+                  ''[]''), ''ALL'') }}'
+                operator: Equals
+                value: false
+        name: autogen-cronjob-add-default-capability-drop
+        skipBackgroundRequests: true
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 1
+      validate: 0
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: 'A Pod securityContext entry defines fields
+        such as the user and group which should be used to run the Pod. Sometimes
+        choosing default values for users rather than blocking is a better alternative
+        to not impede such Pod definitions. This policy will mutate a Pod to set `runAsNonRoot`,
+        `runAsUser`, `runAsGroup`, and  `fsGroup` fields within the Pod securityContext
+        if they are not already set.     '
+      policies.kyverno.io/minversion: 1.6.0
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Add Default securityContext
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: add-default-securitycontext
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      mutate:
+        patchStrategicMerge:
+          spec:
+            securityContext:
+              +(fsGroup): 65534
+              +(runAsGroup): 65534
+              +(runAsNonRoot): true
+              +(runAsUser): 65534
+      name: add-default-securitycontext
+      skipBackgroundRequests: true
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - Job
+              - ReplicaSet
+              - ReplicationController
+              - StatefulSet
+          resources: {}
+        mutate:
+          patchStrategicMerge:
+            spec:
+              template:
+                spec:
+                  securityContext:
+                    +(fsGroup): 65534
+                    +(runAsGroup): 65534
+                    +(runAsNonRoot): true
+                    +(runAsUser): 65534
+        name: autogen-add-default-securitycontext
+        skipBackgroundRequests: true
+      - exclude:
+          any:
+          - resources:
+              kinds:
+              - CronJob
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - CronJob
+          resources: {}
+        mutate:
+          patchStrategicMerge:
+            spec:
+              jobTemplate:
+                spec:
+                  template:
+                    spec:
+                      securityContext:
+                        +(fsGroup): 65534
+                        +(runAsGroup): 65534
+                        +(runAsNonRoot): true
+                        +(runAsUser): 65534
+        name: autogen-cronjob-add-default-securitycontext
+        skipBackgroundRequests: true
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 1
+      validate: 0
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: 'Ephemeral containers, enabled by default in
+        Kubernetes 1.23, allow users to use the `kubectl debug` functionality and
+        attach a temporary container to an existing Pod. This may potentially be used
+        to gain access to unauthorized information executing inside one or more containers
+        in that Pod. This policy blocks the use of ephemeral containers.  '
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Block Ephemeral Containers
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: block-ephemeral-containers
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: block-ephemeral-containers
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Ephemeral (debug) containers are not permitted.
+        pattern:
+          spec:
+            X(ephemeralContainers): "null"
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-block-ephemeral-containers
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Ephemeral (debug) containers are not permitted.
+          pattern:
+            spec:
+              template:
+                spec:
+                  X(ephemeralContainers): "null"
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: Automouting of Kubernetes API credentials is
+        not ideal in all circumstances. This policy finds Pods and Service Accounts
+        that automount kubernetes api credentials.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod, ServiceAccount
+      policies.kyverno.io/title: Disallow AutoMount Service Account Tokens
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-auto-mount-service-account-token
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            kinds:
+            - Pod
+            - Deployment
+            names:
+            - kyverno-reporter*
+            namespaces:
+            - kyverno-reporter
+        - resources:
+            kinds:
+            - Pod
+            - Deployment
+            - StatefulSet
+            names:
+            - notification-controller*
+            - helm-controller*
+            - source-controller*
+            - kustomize-controller*
+            namespaces:
+            - flux-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+            - StatefulSet
+            - Deployment
+      name: automount-pods
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Automount Kubernetes API Credentials is explicitly turned on. The
+          field spec.automountServiceAccountToken  must be undefined or set to false.
+        pattern:
+          spec:
+            =(automountServiceAccountToken): false
+            =(template):
+              =(spec):
+                =(automountServiceAccountToken): false
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            kinds:
+            - Pod
+            - Deployment
+            names:
+            - kyverno-reporter*
+            namespaces:
+            - kyverno-reporter
+        - resources:
+            kinds:
+            - Pod
+            - Deployment
+            - StatefulSet
+            names:
+            - notification-controller*
+            - helm-controller*
+            - source-controller*
+            - kustomize-controller*
+            namespaces:
+            - flux-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - ServiceAccount
+      name: automount-service-accounts
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Automount Kubernetes API Credentials isn't turned off. The field
+          automountServiceAccountToken  must be set to false.
+        pattern:
+          automountServiceAccountToken: false
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 2
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: Host namespaces (Process ID namespace, Inter-Process
+        Communication namespace, and network namespace) allow access to shared information
+        and can be used to elevate privileges. Pods should not be allowed access to
+        host namespaces. This policy ensures fields which make use of these host namespaces
+        are set to `false`.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Disallow Host Namespaces
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-host-namespaces
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: host-namespaces
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Sharing the host namespaces is disallowed. The fields spec.hostNetwork,
+          spec.hostIPC, and spec.hostPID must not be set to true.
+        pattern:
+          spec:
+            =(hostIPC): "false"
+            =(hostNetwork): "false"
+            =(hostPID): "false"
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-host-namespaces
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Sharing the host namespaces is disallowed. The fields spec.hostNetwork,
+            spec.hostIPC, and spec.hostPID must not be set to true.
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(hostIPC): "false"
+                  =(hostNetwork): "false"
+                  =(hostPID): "false"
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices
+      policies.kyverno.io/description: Mutable tags, like 'latest', can lead to unexpected
+        errors if the image changes. A best practice is to use an immutable tag that
+        maps to a specific version of an application Pod. This policy validates that
+        the image specifies a tag and that it is not in the list of disallowed tags.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Disallow Image Tags
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-image-tags
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: require-image-tag
+      preconditions:
+        all:
+        - key: '{{request.operation || ''BACKGROUND''}}'
+          operator: In
+          value:
+          - CREATE
+          - UPDATE
+          - BACKGROUND
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            image: '*:*'
+        message: Images without tags are mutable and not allowed.
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: validate-image-tag
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            image: '!*:latest'
+        message: Using a mutable image tag e.g. 'latest' is not allowed.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-require-image-tag
+        preconditions:
+          all:
+          - key: '{{request.operation || ''BACKGROUND''}}'
+            operator: In
+            value:
+            - CREATE
+            - UPDATE
+            - BACKGROUND
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              image: '*:*'
+          message: Images without tags are mutable and not allowed.
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-validate-image-tag
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              image: '!*:latest'
+          message: Using a mutable image tag e.g. 'latest' is not allowed.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 2
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: The Istio service mesh uses a sidecar to encrypt
+        traffic.  Unless an application is managing its own encrypted traffic, Istio
+        should be used.  This policy validates that the pods do not have the sidecar.istio.io/inject
+        label set to false.
+      policies.kyverno.io/severity: low
+      policies.kyverno.io/subject: Pods
+      policies.kyverno.io/title: Disallow Istio Injection Bypass
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-istio-injection-bypass
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            namespaces:
+            - istio-system
+            - istio-gateway
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: istio-on-pods
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: The sidecar.istio.io/inject label or annotation cannot be false.
+        pattern:
+          metadata:
+            =(annotations):
+              =(sidecar.istio.io/inject): '!false'
+            =(labels):
+              =(sidecar.istio.io/inject): '!false'
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          - resources:
+              namespaces:
+              - istio-system
+              - istio-gateway
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-istio-on-pods
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: The sidecar.istio.io/inject label or annotation cannot be false.
+          pattern:
+            spec:
+              template:
+                metadata:
+                  =(annotations):
+                    =(sidecar.istio.io/inject): '!false'
+                  =(labels):
+                    =(sidecar.istio.io/inject): '!false'
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: Kubernetes Namespaces are an optional feature
+        that provide a way to segment and isolate cluster resources across multiple
+        applications and users. As a best practice, workloads should be isolated with
+        Namespaces. Namespaces should be required and the default (empty) Namespace
+        should not be used. This policy validates that resources specify a Namespace
+        name other than `default`.
+      policies.kyverno.io/severity: low
+      policies.kyverno.io/subject: Pod, Deployment, StatefulSet, DaemonSet, Jobs,
+        CronJobs
+      policies.kyverno.io/title: Disallow Default Namespace
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-namespaces
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+            - Deployment
+            - StatefulSet
+            - DaemonSet
+            - Job
+            - CronJob
+      name: validate-namespace
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: The namespace used for this resource is not allowed.
+        pattern:
+          metadata:
+            namespace: '!bigbang & !default'
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+            - Deployment
+            - StatefulSet
+            - DaemonSet
+            - Job
+            - CronJob
+      name: require-namespace
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: A namespace is required.
+        pattern:
+          metadata:
+            namespace: ?*
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 2
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: A Kubernetes Service of type NodePort uses
+        a host port to receive traffic from any source. A NetworkPolicy cannot be
+        used to control traffic to host ports. Although NodePort Services can be useful,
+        their use must be limited to Services with additional upstream security checks.
+        This policy validates that any new Services do not use the `NodePort` type.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Service
+      policies.kyverno.io/title: Disallow NodePort Services
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-nodeport-services
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Service
+      name: validate-nodeport
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Services of type NodePort are not allowed.
+        pattern:
+          spec:
+            type: '!NodePort'
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Restricted)
+      policies.kyverno.io/description: Privilege escalation, such as via set-user-ID
+        or set-group-ID file mode, should not be allowed. This policy ensures the
+        `allowPrivilegeEscalation` fields are either undefined or set to `false`.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Disallow Privilege Escalation
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-privilege-escalation
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: disallow-privilege-escalation
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(allowPrivilegeEscalation): "false"
+        message: Privilege escalation is disallowed. The fields spec.containers[*].securityContext.allowPrivilegeEscalation,
+          spec.initContainers[*].securityContext.allowPrivilegeEscalation, and spec.ephemeralContainers[*].securityContext.allowPrivilegeEscalation
+          must be undefined or set to `false`.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-disallow-privilege-escalation
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(allowPrivilegeEscalation): "false"
+          message: Privilege escalation is disallowed. The fields spec.containers[*].securityContext.allowPrivilegeEscalation,
+            spec.initContainers[*].securityContext.allowPrivilegeEscalation, and spec.ephemeralContainers[*].securityContext.allowPrivilegeEscalation
+            must be undefined or set to `false`.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: Privileged mode disables most security mechanisms
+        and must not be allowed. This policy ensures Pods do not call for privileged
+        mode.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Disallow Privileged Containers
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-privileged-containers
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: priviledged-containers
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(privileged): "false"
+        message: Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged,
+          spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged
+          must be undefined or set to false.
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-priviledged-containers
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(privileged): "false"
+          message: Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged,
+            spec.initContainers[*].securityContext.privileged, and spec.ephemeralContainers[*].securityContext.privileged
+            must be undefined or set to false.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: SELinux options can be used to escalate privileges.
+        This policy ensures that the `seLinuxOptions` specified are not used.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Disallow SELinux Options
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: disallow-selinux-options
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: pod-disallow-selinux-user
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user,
+          spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user,
+          and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must
+          be undefined.
+        pattern:
+          spec:
+            =(securityContext):
+              =(seLinuxOptions):
+                X(user): "null"
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: container-disallow-selinux-user
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(seLinuxOptions):
+                X(user): "null"
+        message: Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user,
+          spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user,
+          and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must
+          be undefined.
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: pod-disallow-selinux-role
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role,
+          spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role,
+          and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must
+          be undefined.
+        pattern:
+          spec:
+            =(securityContext):
+              =(seLinuxOptions):
+                X(role): "null"
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: container-disallow-selinux-role
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(seLinuxOptions):
+                X(role): "null"
+        message: Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role,
+          spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role,
+          and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must
+          be undefined.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-pod-disallow-selinux-user
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user,
+            spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user,
+            and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must
+            be undefined.
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(seLinuxOptions):
+                      X(user): "null"
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-container-disallow-selinux-user
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(seLinuxOptions):
+                  X(user): "null"
+          message: Setting SELinux user is not allowed.  The fields spec.securityContext.seLinuxOptions.user,
+            spec.containers[*].securityContext.seLinuxOptions.user, spec.initContainers[*].securityContext.seLinuxOptions.user,
+            and spec.ephemeralContainers[*].securityContext.seLinuxOptions.user must
+            be undefined.
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-pod-disallow-selinux-role
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role,
+            spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role,
+            and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must
+            be undefined.
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(seLinuxOptions):
+                      X(role): "null"
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-container-disallow-selinux-role
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(seLinuxOptions):
+                  X(role): "null"
+          message: Setting SELinux role is not allowed.  The fields spec.securityContext.seLinuxOptions.role,
+            spec.containers[*].securityContext.seLinuxOptions.role, spec.initContainers[*].securityContext.seLinuxOptions.role,
+            and spec.ephemeralContainers[*].securityContext.seLinuxOptions.role must
+            be undefined.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 4
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Restricted)
+      policies.kyverno.io/description: 'Capabilities permit privileged actions without
+        giving full root access. All capabilities should be dropped from a Pod, with
+        only those required added back. This policy ensures that all containers explicitly
+        specify `drop: ["ALL"]`.'
+      policies.kyverno.io/minversion: 1.5.0
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Drop All Capabilities
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: require-drop-all-capabilities
+  spec:
+    admission: true
+    background: false
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: drop-all-capabilities
+      preconditions:
+        all:
+        - key: '{{ request.operation || ''BACKGROUND'' }}'
+          operator: NotEquals
+          value: DELETE
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - deny:
+            conditions:
+              any:
+              - key: '{{ not_null(element.securityContext.capabilities.drop, ''[]'')
+                  | contains(@, ''ALL'') }}'
+                operator: Equals
+                value: false
+          list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+        message: Containers must drop all Linux capabilities by setting the fields
+          spec.containers[*].securityContext.capabilities.drop, spec.initContainers[*].securityContext.capabilities.drop,
+          and spec.ephemeralContainers[*].securityContext.capabilities.drop to `ALL`.
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-drop-all-capabilities
+        preconditions:
+          all:
+          - key: '{{ request.operation || ''BACKGROUND'' }}'
+            operator: NotEquals
+            value: DELETE
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - deny:
+              conditions:
+                any:
+                - key: '{{ not_null(element.securityContext.capabilities.drop, ''[]'')
+                    | contains(@, ''ALL'') }}'
+                  operator: Equals
+                  value: false
+            list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+          message: Containers must drop all Linux capabilities by setting the fields
+            spec.containers[*].securityContext.capabilities.drop, spec.initContainers[*].securityContext.capabilities.drop,
+            and spec.ephemeralContainers[*].securityContext.capabilities.drop to `ALL`.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: The Istio service mesh uses a sidecar to encrypt
+        traffic.  Unless an application is managing its own encrypted traffic, Istio
+        should be used.  This policy validates that the istio-injection label is set
+        to enabled on namespace resources.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Namespace
+      policies.kyverno.io/title: Require Istio Sidecar Injection on Namespace
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: require-istio-on-namespaces
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            namespaces:
+            - kube-node-lease
+            - kube-public
+            - kube-system
+            - bigbang
+            - default
+            - flux-system
+            - istio-operator
+            - istio-system
+            - istio-gateway
+      match:
+        all:
+        - resources:
+            kinds:
+            - Namespace
+      name: istio-on-namespace
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: 'Namespaces must have `istio-injection: enabled` label.'
+        pattern:
+          metadata:
+            labels:
+              istio-injection: enabled
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices
+      policies.kyverno.io/description: A common set of labels on resources allows
+        tools to work interoperably, describing objects in a common manner that all
+        tools can understand and query.  This policy validates that the labels and
+        values specified in the required list are present on pods.
+      policies.kyverno.io/severity: low
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Require Labels
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: require-labels
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: check-for-labels
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: The pod is missing a required label.
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/name: ?*
+              app.kubernetes.io/version: ?*
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-check-for-labels
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: The pod is missing a required label.
+          pattern:
+            spec:
+              template:
+                metadata:
+                  labels:
+                    app.kubernetes.io/name: ?*
+                    app.kubernetes.io/version: ?*
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Restricted)
+      policies.kyverno.io/description: Following the least privilege principle, access
+        to the root group ID should be forbidden in containers. This policy ensures
+        containers are running with groups > 0.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Reqire Non-root Group
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: require-non-root-group
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: run-as-group
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(runAsGroup): '*'
+          preconditions:
+            all:
+            - key: '{{ element.name }}'
+              operator: AnyIn
+              value:
+              - istio-init
+              - init-chmod-data
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(runAsGroup): '>0'
+          preconditions:
+            all:
+            - key: '{{ element.name }}'
+              operator: AnyNotIn
+              value:
+              - istio-init
+              - init-chmod-data
+            any:
+            - key: '{{ request.object.spec.securityContext.runAsGroup || to_number(''0'')
+                }}'
+              operator: NotEquals
+              value: 0
+        - anyPattern:
+          - securityContext:
+              runAsGroup: '>0'
+          list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          preconditions:
+            all:
+            - key: '{{ request.object.spec.securityContext.runAsGroup || to_number(''0'')
+                }}'
+              operator: Equals
+              value: 0
+            - key: '{{ element.name }}'
+              operator: AnyNotIn
+              value:
+              - istio-init
+              - init-chmod-data
+        message: runAsGroup must be set to an id > 0 in either spec.securityContext.runAsGroup
+          or (spec.containers[*].securityContext.runAsGroup, spec.initContainers[*].securityContext.runAsGroup,
+          and spec.ephemeralContainers[*].securityContext.runAsGroup)
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: fs-group
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: fsGroup must be empty or set to an id > 0 in spec.securityContextChanging.
+        pattern:
+          spec:
+            =(securityContext):
+              =(fsGroup): '>0'
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: supplemental-groups
+      preconditions:
+        all:
+        - key: '{{request.operation || ''BACKGROUND''}}'
+          operator: In
+          value:
+          - CREATE
+          - UPDATE
+          - BACKGROUND
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Supplemental group ids must be empty or > 0 in spec.securityContext.supplementalGroups[*].
+        pattern:
+          spec:
+            =(securityContext):
+              =(supplementalGroups): '>0'
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-run-as-group
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(runAsGroup): '*'
+            preconditions:
+              all:
+              - key: '{{ element.name }}'
+                operator: AnyIn
+                value:
+                - istio-init
+                - init-chmod-data
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(runAsGroup): '>0'
+            preconditions:
+              all:
+              - key: '{{ element.name }}'
+                operator: AnyNotIn
+                value:
+                - istio-init
+                - init-chmod-data
+              any:
+              - key: '{{ request.object.spec.template.spec.securityContext.runAsGroup
+                  || to_number(''0'') }}'
+                operator: NotEquals
+                value: 0
+          - anyPattern:
+            - securityContext:
+                runAsGroup: '>0'
+            list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            preconditions:
+              all:
+              - key: '{{ request.object.spec.template.spec.securityContext.runAsGroup
+                  || to_number(''0'') }}'
+                operator: Equals
+                value: 0
+              - key: '{{ element.name }}'
+                operator: AnyNotIn
+                value:
+                - istio-init
+                - init-chmod-data
+          message: runAsGroup must be set to an id > 0 in either spec.securityContext.runAsGroup
+            or (spec.containers[*].securityContext.runAsGroup, spec.initContainers[*].securityContext.runAsGroup,
+            and spec.ephemeralContainers[*].securityContext.runAsGroup)
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-fs-group
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: fsGroup must be empty or set to an id > 0 in spec.securityContextChanging.
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(fsGroup): '>0'
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-supplemental-groups
+        preconditions:
+          all:
+          - key: '{{request.operation || ''BACKGROUND''}}'
+            operator: In
+            value:
+            - CREATE
+            - UPDATE
+            - BACKGROUND
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Supplemental group ids must be empty or > 0 in spec.securityContext.supplementalGroups[*].
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(supplementalGroups): '>0'
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 3
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Restricted)
+      policies.kyverno.io/description: Following the least privilege principle, containers
+        should not be run as root. This policy ensures containers either have `runAsNonRoot`
+        set to `true` or `runAsUser` > 0.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Reqire Non-root User
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: require-non-root-user
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: non-root-user
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(runAsNonRoot): '*'
+              =(runAsUser): '*'
+          preconditions:
+            all:
+            - key: '{{ element.name }}'
+              operator: AnyIn
+              value:
+              - istio-init
+              - init-chmod-data
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(runAsNonRoot): '!false'
+              =(runAsUser): '>0'
+          preconditions:
+            all:
+            - key: '{{ element.name }}'
+              operator: AnyNotIn
+              value:
+              - istio-init
+              - init-chmod-data
+            any:
+            - key: '{{ request.object.spec.securityContext.runAsUser || to_number(''0'')
+                }}'
+              operator: NotEquals
+              value: 0
+            - key: '{{ request.object.spec.securityContext.runAsNonRoot || ''0'' ==
+                ''1'' }}'
+              operator: Equals
+              value: true
+        - anyPattern:
+          - securityContext:
+              runAsNonRoot: true
+          - securityContext:
+              runAsUser: '>0'
+          list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          preconditions:
+            all:
+            - key: '{{ request.object.spec.securityContext.runAsUser || to_number(''0'')
+                }}'
+              operator: Equals
+              value: 0
+            - key: '{{ request.object.spec.securityContext.runAsNonRoot || ''0'' ==
+                ''1'' }}'
+              operator: NotEquals
+              value: true
+            - key: '{{ element.name }}'
+              operator: AnyNotIn
+              value:
+              - istio-init
+              - init-chmod-data
+        message: Either `runAsNonRoot` must be set to true or `runAsUser` must be
+          > 0 in spec.securityContext or (spec.containers[*].securityContext, spec.initContainers[*].securityContext,
+          and spec.ephemeralContainers[*].securityContext)
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-non-root-user
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(runAsNonRoot): '*'
+                =(runAsUser): '*'
+            preconditions:
+              all:
+              - key: '{{ element.name }}'
+                operator: AnyIn
+                value:
+                - istio-init
+                - init-chmod-data
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(runAsNonRoot): '!false'
+                =(runAsUser): '>0'
+            preconditions:
+              all:
+              - key: '{{ element.name }}'
+                operator: AnyNotIn
+                value:
+                - istio-init
+                - init-chmod-data
+              any:
+              - key: '{{ request.object.spec.template.spec.securityContext.runAsUser
+                  || to_number(''0'') }}'
+                operator: NotEquals
+                value: 0
+              - key: '{{ request.object.spec.template.spec.securityContext.runAsNonRoot
+                  || ''0'' == ''1'' }}'
+                operator: Equals
+                value: true
+          - anyPattern:
+            - securityContext:
+                runAsNonRoot: true
+            - securityContext:
+                runAsUser: '>0'
+            list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            preconditions:
+              all:
+              - key: '{{ request.object.spec.template.spec.securityContext.runAsUser
+                  || to_number(''0'') }}'
+                operator: Equals
+                value: 0
+              - key: '{{ request.object.spec.template.spec.securityContext.runAsNonRoot
+                  || ''0'' == ''1'' }}'
+                operator: NotEquals
+                value: true
+              - key: '{{ element.name }}'
+                operator: AnyNotIn
+                value:
+                - istio-init
+                - init-chmod-data
+          message: Either `runAsNonRoot` must be set to true or `runAsUser` must be
+            > 0 in spec.securityContext or (spec.containers[*].securityContext, spec.initContainers[*].securityContext,
+            and spec.ephemeralContainers[*].securityContext)
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: On hosts using Debian Linux distros, AppArmor
+        is used as an access control framework.  AppArmor uses the 'runtime/default'
+        profile by default.  This policy ensures Pods do not override the AppArmor
+        profile with values outside of the allowed list.
+      policies.kyverno.io/minversion: 1.3.0
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict AppArmor Profile
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-apparmor
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: app-armor
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: The AppArmor profile used is not in the approved list. The annotation
+          container.apparmor.security.beta.kubernetes.io must not be defined, or must
+          be set to a profile on the approved list.
+        pattern:
+          metadata:
+            =(annotations):
+              =(container.apparmor.security.beta.kubernetes.io/*): runtime/default
+                | localhost/*
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-app-armor
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: The AppArmor profile used is not in the approved list. The annotation
+            container.apparmor.security.beta.kubernetes.io must not be defined, or
+            must be set to a profile on the approved list.
+          pattern:
+            spec:
+              template:
+                metadata:
+                  =(annotations):
+                    =(container.apparmor.security.beta.kubernetes.io/*): runtime/default
+                      | localhost/*
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Restricted)
+      policies.kyverno.io/description: Capabilities permit privileged actions without
+        giving full root access. Adding capabilities beyond the default set must not
+        be allowed. This policy ensures users cannot add additional capabilities beyond
+        the allowed list to a Pod.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Capabilities
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-capabilities
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: capabilities
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(capabilities):
+                =(add): NET_BIND_SERVICE | NET_ADMIN | NET_RAW
+        message: Adding of additional capabilities beyond the allowed set is not allowed.
+          The fields spec.containers[*].securityContext.capabilities.add, spec.initContainers[*].securityContext.capabilities.add,
+          and spec.ephemeralContainers[*].securityContext.capabilities.add must be
+          in the allowed list.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-capabilities
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(capabilities):
+                  =(add): NET_BIND_SERVICE | NET_ADMIN | NET_RAW
+          message: Adding of additional capabilities beyond the allowed set is not
+            allowed. The fields spec.containers[*].securityContext.capabilities.add,
+            spec.initContainers[*].securityContext.capabilities.add, and spec.ephemeralContainers[*].securityContext.capabilities.add
+            must be in the allowed list.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Vulnerability
+      policies.kyverno.io/description: Service externalIPs can be used for a MITM
+        attack (CVE-2020-8554). This policy restricts externalIPs to a specified list.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Service
+      policies.kyverno.io/title: Restrict External IPs (CVE-2020-8554)
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-external-ips
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Service
+      name: external-ips
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Only externalIPs in the approved list are allowed.
+        pattern:
+          spec:
+            =(externalIPs): ""
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Vulnerability
+      policies.kyverno.io/description: Service external names can be used for a MITM
+        attack (CVE-2020-8554).  External names can be used by an attacker to point
+        back to localhost or internal IP addresses for exploitation. This policy restricts
+        services using external names to a specified list.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Service
+      policies.kyverno.io/title: Restrict External Names (CVE-2020-8554)
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-external-names
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Service
+      name: external-names
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Only external names from the approved list are allowed.
+        pattern:
+          spec:
+            (type): ExternalName
+            externalName: ""
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: hostPath volumes consume the underlying node's
+        file system. If hostPath volumes are not universally disabled, they should
+        be restricted to specific host paths to prevent access to sensitive information.
+        This policy ensures that hostPath volume paths are in the allowed list. It
+        is strongly recommended to pair this policy with another to require readOnly
+        on hostPath volumes.
+      policies.kyverno.io/minversion: 1.5.0
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict hostPath Volume Mountable Paths
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-host-path-mount
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            names:
+            - monitoring-monitoring-prometheus-node-exporter*
+            namespaces:
+            - monitoring
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: restrict-hostpath-dirs
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: hostPath volume paths are restricted to the allowed list.
+        pattern:
+          spec:
+            =(volumes):
+            - =(hostPath):
+                path: ""
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: PersistentVolume using hostPath consume the
+        underlying node's file system. If not universally disabled,  they should be
+        restricted to specific host paths to prevent access to sensitive information.  This
+        policy ensures that PV hostPath is in the allowed list.
+      policies.kyverno.io/minversion: 1.5.0
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: PersistentVolume
+      policies.kyverno.io/title: Restrict hostPath Volume Mountable Paths
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-host-path-mount-pv
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - PersistentVolume
+      name: restrict-hostpath
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: PV hostPath is restricted to the allowed list.
+        pattern:
+          spec:
+            =(hostPath):
+              path: ""
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: hostPath volumes consume the underlying node's
+        file system. If hostPath volumes are not universally disabled, they should
+        be required to be read-only. Pods which are allowed to mount hostPath volumes
+        in read/write mode pose a security risk even if confined to a "safe" file
+        system on the host and may escape those confines (see https://blog.aquasec.com/kubernetes-security-pod-escape-log-mounts).
+        This policy checks containers for hostPath volumes and validates they are
+        explicitly mounted in readOnly mode.  It is strongly recommended to pair this
+        policy with another to restrict the path of hostPath volumes to a known list.
+      policies.kyverno.io/minversion: 1.5.0
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict hostPath Volume Writable Paths
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-host-path-write
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: require-readonly-hostpath
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - deny:
+            conditions:
+              all:
+              - key: '{{ request.object.spec.[containers, initContainers, ephemeralContainers][].volumeMounts[?name
+                  == ''{{element.name}}''][] | length(@) }}'
+                operator: NotEquals
+                value: '{{ request.object.spec.[containers, initContainers, ephemeralContainers][].volumeMounts[?name
+                  == ''{{element.name}}'' && readOnly] [] | length(@) }}'
+          list: request.object.spec.volumes[?hostPath][]
+        message: hostPath volumes must be mounted as readOnly.
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-require-readonly-hostpath
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - deny:
+              conditions:
+                all:
+                - key: '{{ request.object.spec.template.spec.[containers, initContainers,
+                    ephemeralContainers][].volumeMounts[?name == ''{{element.name}}''][]
+                    | length(@) }}'
+                  operator: NotEquals
+                  value: '{{ request.object.spec.template.spec.[containers, initContainers,
+                    ephemeralContainers][].volumeMounts[?name == ''{{element.name}}''
+                    && readOnly] [] | length(@) }}'
+            list: request.object.spec.template.spec.volumes[?hostPath][]
+          message: hostPath volumes must be mounted as readOnly.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: Access to host ports allows potential snooping
+        of network traffic and should not be allowed, or at minimum restricted to
+        a known list. This policy ensures only approved ports are defined in container's
+        `hostPort` field.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Host Ports
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-host-ports
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: host-ports
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(ports):
+            - =(hostPort): ""
+        message: The host port used is not allowed. The fields spec.containers[*].ports[*].hostPort,
+          spec.initContainers[*].ports[*].hostPort, and spec.ephemeralContainers[*].ports[*].hostPort
+          must only include ports from the allowed list.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-host-ports
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(ports):
+              - =(hostPort): ""
+          message: The host port used is not allowed. The fields spec.containers[*].ports[*].hostPort,
+            spec.initContainers[*].ports[*].hostPort, and spec.ephemeralContainers[*].ports[*].hostPort
+            must only include ports from the allowed list.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Best Practices (Security)
+      policies.kyverno.io/description: Images from unknown, public registries can
+        be of dubious quality and may not be scanned and secured, representing a high
+        degree of risk. Requiring use of known, approved registries helps reduce threat
+        exposure by ensuring image pulls only come from them. This policy validates
+        that all images originate from a registry in the approved list.
+      policies.kyverno.io/minversion: 1.3.0
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Image Registries
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-image-registries
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: validate-registries
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            image: registry1.dso.mil* | registry.dso.mil*
+        message: Image registry is not in the approved list
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-validate-registries
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              image: registry1.dso.mil* | registry.dso.mil*
+          message: Image registry is not in the approved list
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: The default /proc masks are set up to reduce
+        the attack surface. This policy ensures nothing but the specified procMount
+        can be used.  By default only "Default" is allowed.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Proc Mount
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-proc-mount
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: check-proc-mount
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(procMount): Default
+        message: Changing the proc mount from the default is not allowed. The fields
+          spec.containers[*].securityContext.procMount, spec.initContainers[*].securityContext.procMount,
+          and spec.ephemeralContainers[*].securityContext.procMount must not be changed
+          from `Default`.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-check-proc-mount
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(procMount): Default
+          message: Changing the proc mount from the default is not allowed. The fields
+            spec.containers[*].securityContext.procMount, spec.initContainers[*].securityContext.procMount,
+            and spec.ephemeralContainers[*].securityContext.procMount must not be
+            changed from `Default`.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: The SecComp profile should not be explicitly
+        set to Unconfined. This policy, requiring Kubernetes v1.19 or later, ensures
+        that the `seccompProfile.Type` is undefined or restricted to the values in
+        the allowed list.  By default, this is `RuntimeDefault` or `Localhost`.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Seccomp
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-seccomp
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: pod-restrict-seccomp
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: The seccomp profile used is not in the allowed list.  The fields
+          spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type,
+          spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type
+          must not be set to a value outside of the approved list.
+        pattern:
+          spec:
+            =(securityContext):
+              =(seccompProfile):
+                type: RuntimeDefault | Localhost
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: container-restrict-seccomp
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(seccompProfile):
+                type: RuntimeDefault | Localhost
+        message: The seccomp profile used is not in the allowed list.  The fields
+          spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type,
+          spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type
+          must not be set to a value outside of the approved list.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-pod-restrict-seccomp
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: The seccomp profile used is not in the allowed list.  The fields
+            spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type,
+            spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type
+            must not be set to a value outside of the approved list.
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(seccompProfile):
+                      type: RuntimeDefault | Localhost
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-container-restrict-seccomp
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(seccompProfile):
+                  type: RuntimeDefault | Localhost
+          message: The seccomp profile used is not in the allowed list.  The fields
+            spec.securityContext.seccompProfile.type, spec.containers[*].securityContext.seccompProfile.type,
+            spec.initContainers[*].securityContext.seccompProfile.type, and spec.ephemeralContainers[*].securityContext.seccompProfile.type
+            must not be set to a value outside of the approved list.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 2
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: SELinux options can be used to escalate privileges.
+        This policy ensures that the `seLinuxOptions` type field is undefined or restricted
+        to the allowed list.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict SELinux Type
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-selinux-type
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: pod-selinux-options-type
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type,
+          spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type,
+          and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must
+          be in the allowed list.
+        pattern:
+          spec:
+            =(securityContext):
+              =(seLinuxOptions):
+                =(type): container_t | container_init_t | container_kvm_t
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: container-selinux-options-type
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
+          pattern:
+            =(securityContext):
+              =(seLinuxOptions):
+                =(type): container_t | container_init_t | container_kvm_t
+        message: Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type,
+          spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type,
+          and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must
+          be in the allowed list.
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-pod-selinux-options-type
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type,
+            spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type,
+            and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must
+            be in the allowed list.
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(seLinuxOptions):
+                      =(type): container_t | container_init_t | container_kvm_t
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-container-selinux-options-type
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          foreach:
+          - list: request.object.spec.template.spec.[ephemeralContainers, initContainers,
+              containers][]
+            pattern:
+              =(securityContext):
+                =(seLinuxOptions):
+                  =(type): container_t | container_init_t | container_kvm_t
+          message: Setting SELinux type is restricted.  The values from spec.securityContext.seLinuxOptions.type,
+            spec.containers[*].securityContext.seLinuxOptions.type, spec.initContainers[*].securityContext.seLinuxOptions.type,
+            and spec.ephemeralContainers[*].securityContext.seLinuxOptions.type must
+            be in the allowed list.
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 2
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Baseline)
+      policies.kyverno.io/description: Sysctl can disable security mechanisms or affect
+        all containers on a host, and should be restricted to an allowed "safe" subset.
+        A sysctl is considered safe if it is namespaced and is isolated from other
+        Pods and processes on the same Node.  This policy ensures that all sysctls
+        are in the allowed list.
+      policies.kyverno.io/severity: high
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Sysctls
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-sysctls
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: sysctls
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        message: Sysctl set that is not in the allowed list.  The field spec.securityContext.sysctls
+          must only use values from the allowed list
+        pattern:
+          spec:
+            =(securityContext):
+              =(sysctls):
+              - name: kernel.shm_rmid_forced | net.ipv4.ip_local_port_range | net.ipv4.ip_unprivileged_port_start
+                  | net.ipv4.tcp_syncookies | net.ipv4.ping_group_range | net.ipv4.ip_local_reserved_ports
+                  | net.ipv4.tcp_keepalive_time | net.ipv4.tcp_fin_timeout | net.ipv4.tcp_keepalive_intvl
+                  | net.ipv4.tcp_keepalive_probes
+                value: ?*
+    validationFailureAction: Enforce
+    webhookTimeoutSeconds: 30
+  status:
+    autogen:
+      rules:
+      - exclude:
+          any:
+          - resources:
+              namespaces:
+              - kube-system
+          resources: {}
+        match:
+          all:
+          - resources:
+              kinds:
+              - DaemonSet
+              - Deployment
+              - ReplicaSet
+              - StatefulSet
+          resources: {}
+        name: autogen-sysctls
+        skipBackgroundRequests: true
+        validate:
+          allowExistingViolations: true
+          message: Sysctl set that is not in the allowed list.  The field spec.securityContext.sysctls
+            must only use values from the allowed list
+          pattern:
+            spec:
+              template:
+                spec:
+                  =(securityContext):
+                    =(sysctls):
+                    - name: kernel.shm_rmid_forced | net.ipv4.ip_local_port_range
+                        | net.ipv4.ip_unprivileged_port_start | net.ipv4.tcp_syncookies
+                        | net.ipv4.ping_group_range | net.ipv4.ip_local_reserved_ports
+                        | net.ipv4.tcp_keepalive_time | net.ipv4.tcp_fin_timeout |
+                        net.ipv4.tcp_keepalive_intvl | net.ipv4.tcp_keepalive_probes
+                      value: ?*
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      pod-policies.kyverno.io/autogen-controllers: Deployment,ReplicaSet,DaemonSet,StatefulSet
+      policies.kyverno.io/category: Pod Security Standards (Restricted)
+      policies.kyverno.io/description: Volume types, beyond the core set, should be
+        restricted to limit exposure to potential vulnerabilities in Container Storage
+        Interface (CSI) drivers.  In addition, HostPath volumes should not be allowed
+        because host directories could be exploited to access shared data or escalate
+        privileges.  This policy restricts use of volume types to the allowed list.
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: Pod
+      policies.kyverno.io/title: Restrict Volume Types
+    labels:
+      app: kyverno
+      app.kubernetes.io/component: policy
+      app.kubernetes.io/instance: kyverno-kyverno-policies
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: kyverno-policies
+      app.kubernetes.io/part-of: kyverno
+      app.kubernetes.io/version: 3.3.4-bb.3
+      helm.sh/chart: kyverno-policies-3.3.4-bb.3
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: restrict-volume-types
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Ignore
+    rules:
+    - exclude:
+        any:
+        - resources:
+            namespaces:
+            - kube-system
+        - resources:
+            names:
+            - monitoring-monitoring-prometheus-node-exporter*
+            namespaces:
+            - monitoring
+      match:
+        all:
+        - resources:
+            kinds:
+            - Pod
+      name: restrict-volume-types
+      preconditions:
+        all:
+        - key: '{{request.operation || ''BACKGROUND''}}'
+          operator: In
+          value:
+          - CREATE
+          - UPDATE
+          - BACKGROUND
+        - key: '{{ not_null(request.object.spec.volumes[], '''') | length(@) }}'
+          operator: GreaterThanOrEquals
+          value: 1
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        foreach:
+        - anyPattern:
+          - configMap: '*'
+          - csi: '*'
+          - downwardAPI: '*'
+          - emptyDir: '*'
+          - ephemeral: '*'
+          - persistentVolumeClaim: '*'
+          - projected: '*'
+          - secret: '*'
+          list: request.object.spec.volumes
+        message: One or more volume types used in the pod is not in the allowed list.
+    validationFailureAction: Audit
+    webhookTimeoutSeconds: 30
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 0
+      validate: 1
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      kyverno.io/kubernetes-version: "1.21"
+      kyverno.io/kyverno-version: 1.6.0
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      policies.kyverno.io/category: Other, EKS Best Practices
+      policies.kyverno.io/description: "By default, Kubernetes automatically provisions
+        a service account when creating a Pod and mounts the account’s secret token
+        within the Pod at runtime. Many containerized applications do not require
+        direct access to the service account as Kubernetes orchestration occurs transparently
+        in the background. If an application is compromised, account tokens in Pods
+        can be gleaned by cyber actors and used to further compromise the cluster.
+        \nWhen an application does not need to access the service account directly,
+        Kubernetes administrators should ensure that Pod specifications disable the
+        secret token being mounted. \nThis policy contains three rules, one that applies
+        to the serviceaccount to disable  automounting the token and another two rules
+        that apply to the pod that will  override the serviceaccount setting because
+        the pod truly needs or doesn't need access to the API.\nNOTE that the default
+        serviceaccount is not included here and must mutated differently"
+      policies.kyverno.io/minversion: 1.6.0
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: ServiceAccount
+      policies.kyverno.io/title: Disable automountServiceAccountToken
+    labels:
+      app.kubernetes.io/managed-by: Helm
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: update-automountserviceaccounttokens
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    rules:
+    - exclude:
+        any:
+        - resources:
+            kinds:
+            - ServiceAccount
+            names:
+            - default
+      match:
+        any:
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - istio-system
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - istio-operator
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - twistlock
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - logging
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - minio-operator
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - minio
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - kyverno
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - velero
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - neuvector
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - kiali
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - argocd
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - harbor
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - authservice
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - monitoring
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - mimir
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - anchore
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - jaeger
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - fortify
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - vault
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - promtail
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - fluentbit
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - eck-operator
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - nexus-repository-manager
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - thanos
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - mattermost
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - mattermost-operator
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - keycloak
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - gitlab
+        - resources:
+            kinds:
+            - ServiceAccount
+            namespaces:
+            - gitlab-runner
+      mutate:
+        patchStrategicMerge:
+          automountServiceAccountToken: false
+      name: disables-serviceaccounts
+      skipBackgroundRequests: true
+    - match:
+        any:
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - istiod-*
+            - passthrough-ingressgateway-*
+            - public-ingressgateway-*
+            namespaces:
+            - istio-system
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - istiod-*
+            - istio-operator-*
+            namespaces:
+            - istio-operator
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - twistlock-init-*
+            - twistlock-volume-upgrade-job
+            - twistlock-defender-ds-*
+            - bb-twistlock-twistlock-upgrade-job-*
+            namespaces:
+            - twistlock
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - logging-loki-minio-*
+            namespaces:
+            - logging
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - console-*
+            - minio-operator-*
+            - bb-minio-operator-minio-operator-tenant-patch
+            namespaces:
+            - minio-operator
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - minio-minio-minio-instance-*
+            - minio-instance-wait-job-*
+            namespaces:
+            - minio
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - kyverno-reports-controller-*
+            - kyverno-admission-controller-*
+            - kyverno-cleanup-controller-*
+            - kyverno-cleanup-admission-reports-*
+            - kyverno-admission-controller-*
+            - kyverno-background-controller-*
+            - kyverno-admission-controller-*
+            - kyverno-cleanup-cluster-admission-reports-*
+            - kyverno-cleanup-cluster-ephemeral-reports-*
+            - kyverno-cleanup-update-requests-*
+            - kyverno-clean-reports-*
+            namespaces:
+            - kyverno
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - velero-cleanup-crds-*
+            - velero-velero-*
+            - node-agent-*
+            - velero-label-namespace-*
+            - velero-script-test
+            - velero-backup-restore-test
+            namespaces:
+            - velero
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - neuvector-manager-pod-*
+            - neuvector-scanner-pod-*
+            - neuvector-cert-upgrader-job-*
+            - neuvector-controller-pod-*
+            - neuvector-enforcer-pod-*
+            - neuvector-updater-pod-*
+            - neuvector-prometheus-exporter-pod-*
+            - neuvector-registry-adapter-pod-*
+            namespaces:
+            - neuvector
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - kiali-*
+            namespaces:
+            - kiali
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - argocd-argocd-application-controller-*
+            - argocd-argocd-dex-server-*
+            - argocd-upgrade-job
+            - argocd-argocd-server-*
+            - argocd-argocd-repo-server-*
+            - argocd-argocd-applicationset-controller-*
+            - argocd-argocd-notifications-controller-*
+            namespaces:
+            - argocd
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - authservice-authservice-redis-bb-*
+            - authservice-haproxy-sso-*
+            namespaces:
+            - authservice
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - monitoring-grafana*
+            - monitoring-monitoring-kube-admission-create-*
+            - monitoring-monitoring-kube-admission-patch-*
+            - monitoring-monitoring-kube-state-metrics*
+            - monitoring-monitoring-kube-operator*
+            - prometheus-monitoring-monitoring-kube-prometheus*
+            - monitoring-alloy-*
+            namespaces:
+            - monitoring
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - mimir-mimir-rollout-operator-*
+            - mimir-mimir-minio*
+            namespaces:
+            - mimir
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - anchore-ui-redis-*
+            namespaces:
+            - anchore
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - jaeger-jaeger-jaeger-operator-*
+            - jaeger-clean-svc-monitor
+            namespaces:
+            - jaeger
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - vault-vault-*
+            - vault-vault-agent-injector-*
+            - vault-vault-job-init-*
+            namespaces:
+            - vault
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - promtail-promtail-*
+            namespaces:
+            - promtail
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - fluentbit-fluent-bit-*
+            namespaces:
+            - fluentbit
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - elastic-operator-*
+            namespaces:
+            - eck-operator
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - nexus-repository-manager-*
+            namespaces:
+            - nexus-repository-manager
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - thanos-minio-*
+            namespaces:
+            - thanos
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - default-minio-bucket-creation-*
+            - mattermost-minio-*
+            - mattermost-wait-job-*
+            namespaces:
+            - mattermost
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - mattermost-operator-*
+            namespaces:
+            - mattermost-operator
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - keycloak-*
+            namespaces:
+            - keycloak
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - gitlab-shared-secrets*
+            namespaces:
+            - gitlab
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - gitlab-runner-*
+            namespaces:
+            - gitlab-runner
+      mutate:
+        patchStrategicMerge:
+          spec:
+            automountServiceAccountToken: true
+      name: enable-pods
+      skipBackgroundRequests: true
+    - match:
+        any:
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - logging-ek-es-data*
+            - logging-ek-es-master*
+            - logging-ek-kb*
+            - logging-ek-metrics*
+            namespaces:
+            - logging
+        - resources:
+            kinds:
+            - Pod
+            names:
+            - thanos-query-frontend-*
+            - thanos-storegateway*
+            - thanos-query*
+            namespaces:
+            - thanos
+      mutate:
+        patchStrategicMerge:
+          spec:
+            automountServiceAccountToken: false
+      name: disable-pods
+      skipBackgroundRequests: true
+    - match:
+        any:
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - istiod-*
+            - passthrough-ingressgateway-*
+            - public-ingressgateway-*
+            namespaces:
+            - istio-system
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - istiod-*
+            - istio-operator-*
+            namespaces:
+            - istio-operator
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - twistlock-init-*
+            - twistlock-volume-upgrade-job
+            - twistlock-defender-ds-*
+            - bb-twistlock-twistlock-upgrade-job-*
+            namespaces:
+            - twistlock
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - logging-loki-minio-*
+            namespaces:
+            - logging
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - console-*
+            - minio-operator-*
+            - bb-minio-operator-minio-operator-tenant-patch
+            namespaces:
+            - minio-operator
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - minio-minio-minio-instance-*
+            - minio-instance-wait-job-*
+            namespaces:
+            - minio
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - kyverno-reports-controller-*
+            - kyverno-admission-controller-*
+            - kyverno-cleanup-controller-*
+            - kyverno-cleanup-admission-reports-*
+            - kyverno-admission-controller-*
+            - kyverno-background-controller-*
+            - kyverno-admission-controller-*
+            - kyverno-cleanup-cluster-admission-reports-*
+            - kyverno-cleanup-cluster-ephemeral-reports-*
+            - kyverno-cleanup-update-requests-*
+            - kyverno-clean-reports-*
+            namespaces:
+            - kyverno
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - velero-cleanup-crds-*
+            - velero-velero-*
+            - node-agent-*
+            - velero-label-namespace-*
+            - velero-script-test
+            - velero-backup-restore-test
+            namespaces:
+            - velero
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - neuvector-manager-pod-*
+            - neuvector-scanner-pod-*
+            - neuvector-cert-upgrader-job-*
+            - neuvector-controller-pod-*
+            - neuvector-enforcer-pod-*
+            - neuvector-updater-pod-*
+            - neuvector-prometheus-exporter-pod-*
+            - neuvector-registry-adapter-pod-*
+            namespaces:
+            - neuvector
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - kiali-*
+            namespaces:
+            - kiali
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - argocd-argocd-application-controller-*
+            - argocd-argocd-dex-server-*
+            - argocd-upgrade-job
+            - argocd-argocd-server-*
+            - argocd-argocd-repo-server-*
+            - argocd-argocd-applicationset-controller-*
+            - argocd-argocd-notifications-controller-*
+            namespaces:
+            - argocd
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - authservice-authservice-redis-bb-*
+            - authservice-haproxy-sso-*
+            namespaces:
+            - authservice
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - monitoring-grafana*
+            - monitoring-monitoring-kube-admission-create-*
+            - monitoring-monitoring-kube-admission-patch-*
+            - monitoring-monitoring-kube-state-metrics*
+            - monitoring-monitoring-kube-operator*
+            - prometheus-monitoring-monitoring-kube-prometheus*
+            - monitoring-alloy-*
+            namespaces:
+            - monitoring
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - mimir-mimir-rollout-operator-*
+            - mimir-mimir-minio*
+            namespaces:
+            - mimir
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - anchore-ui-redis-*
+            namespaces:
+            - anchore
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - jaeger-jaeger-jaeger-operator-*
+            - jaeger-clean-svc-monitor
+            namespaces:
+            - jaeger
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - vault-vault-*
+            - vault-vault-agent-injector-*
+            - vault-vault-job-init-*
+            namespaces:
+            - vault
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - promtail-promtail-*
+            namespaces:
+            - promtail
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - fluentbit-fluent-bit-*
+            namespaces:
+            - fluentbit
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - elastic-operator-*
+            namespaces:
+            - eck-operator
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - nexus-repository-manager-*
+            namespaces:
+            - nexus-repository-manager
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - thanos-minio-*
+            namespaces:
+            - thanos
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - default-minio-bucket-creation-*
+            - mattermost-minio-*
+            - mattermost-wait-job-*
+            namespaces:
+            - mattermost
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - mattermost-operator-*
+            namespaces:
+            - mattermost-operator
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - keycloak-*
+            namespaces:
+            - keycloak
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - gitlab-shared-secrets*
+            namespaces:
+            - gitlab
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - gitlab-runner-*
+            namespaces:
+            - gitlab-runner
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                automountServiceAccountToken: true
+      name: enable-statefulset-and-deployments
+      skipBackgroundRequests: true
+    - match:
+        any:
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - logging-ek-es-data*
+            - logging-ek-es-master*
+            - logging-ek-kb*
+            - logging-ek-metrics*
+            namespaces:
+            - logging
+        - resources:
+            kinds:
+            - StatefulSet
+            - Deployment
+            names:
+            - thanos-query-frontend-*
+            - thanos-storegateway*
+            - thanos-query*
+            namespaces:
+            - thanos
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                automountServiceAccountToken: false
+      name: disable-statefulsets-and-deployments
+      skipBackgroundRequests: true
+    validationFailureAction: Audit
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 5
+      validate: 0
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+- apiVersion: kyverno.io/v1
+  kind: ClusterPolicy
+  metadata:
+    annotations:
+      kyverno.io/kubernetes-version: "1.21"
+      kyverno.io/kyverno-version: 1.6.0
+      meta.helm.sh/release-name: kyverno-kyverno-policies
+      meta.helm.sh/release-namespace: kyverno
+      policies.kyverno.io/category: Other, EKS Best Practices
+      policies.kyverno.io/description: 'A new ServiceAccount called `default` is created
+        whenever a new Namespace is created. Pods spawned in that Namespace, unless
+        otherwise set, will be assigned this ServiceAccount. This policy mutates any
+        new `default` ServiceAccounts to disable auto-mounting of the token into Pods
+        obviating the need to do so individually.      '
+      policies.kyverno.io/minversion: 1.6.0
+      policies.kyverno.io/severity: medium
+      policies.kyverno.io/subject: ServiceAccount
+      policies.kyverno.io/title: Disable automountServiceAccountToken
+    labels:
+      app.kubernetes.io/managed-by: Helm
+      helm.toolkit.fluxcd.io/name: kyverno-policies
+      helm.toolkit.fluxcd.io/namespace: bigbang
+    name: update-automountserviceaccounttokens-default
+  spec:
+    admission: true
+    background: true
+    emitWarning: false
+    failurePolicy: Fail
+    mutateExistingOnPolicyUpdate: true
+    rules:
+    - match:
+        any:
+        - resources:
+            kinds:
+            - ServiceAccount
+            names:
+            - default
+      mutate:
+        patchStrategicMerge:
+          automountServiceAccountToken: false
+        targets:
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: istio-system
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: istio-operator
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: twistlock
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: argocd
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: logging
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: velero
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: minio
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: minio-operator
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: kyverno-reporter
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: kyverno
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: velero
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: neuvector
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: kiali
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: harbor
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: authservice
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: anchore
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: fortify
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: vault
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: promtail
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: fluentbit
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: eck-operator
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: nexus-repository-manager
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: thanos
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: mattermost
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: mattermost-operator
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: bigbang
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: flux-system
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: keycloak
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: monitoring
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: gitlab
+        - apiVersion: v1
+          kind: ServiceAccount
+          name: default
+          namespace: gitlab-runner
+      name: mutate-default-serviceaccount-tokens
+      skipBackgroundRequests: true
+    validationFailureAction: Audit
+  status:
+    autogen: {}
+    conditions:
+    - lastTransitionTime: "2025-04-10T03:03:33Z"
+      message: Ready
+      reason: Succeeded
+      status: "True"
+      type: Ready
+    rulecount:
+      generate: 0
+      mutate: 1
+      validate: 0
+      verifyimages: 0
+    validatingadmissionpolicy:
+      generated: false
+      message: ""
+kind: List
